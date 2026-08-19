@@ -1,5 +1,14 @@
-import { Outlet } from 'react-router-dom';
-import { appConfig } from '../config/appConfig';
+import { NavLink, Outlet } from 'react-router-dom';
+import { appConfig, BASE_PATH } from '../config/appConfig';
+
+const navItems = [
+  { label: 'Dashboard', path: `${BASE_PATH}/student/dashboard` },
+  { label: 'Profile', path: `${BASE_PATH}/student/profile` },
+  { label: 'Academic', path: `${BASE_PATH}/student/academic` },
+  { label: 'Courses', path: `${BASE_PATH}/student/courses` },
+  { label: 'Documents', path: `${BASE_PATH}/student/documents` },
+  { label: 'Settings', path: `${BASE_PATH}/student/settings` }
+];
 
 const StudentLayout = () => {
   return (
@@ -18,10 +27,24 @@ const StudentLayout = () => {
           {appConfig.logoPlaceholder}
         </div>
         <nav style={{ padding: '1rem' }}>
-          <div style={{ padding: '0.75rem 0.9rem', borderRadius: 10, background: '#fff5ee', color: appConfig.colors.primary, fontWeight: 600 }}>Dashboard</div>
-          <div style={{ padding: '0.75rem 0.9rem', marginTop: 8, color: '#444' }}>Profile</div>
-          <div style={{ padding: '0.75rem 0.9rem', marginTop: 8, color: '#444' }}>Courses</div>
-          <div style={{ padding: '0.75rem 0.9rem', marginTop: 8, color: '#444' }}>Documents</div>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.path}
+              end={item.path === `${BASE_PATH}/student/dashboard`}
+              style={({ isActive }) => ({
+                display: 'block',
+                padding: '0.75rem 0.9rem',
+                borderRadius: 10,
+                marginTop: 8,
+                color: isActive ? appConfig.colors.primary : '#444',
+                background: isActive ? '#fff5ee' : 'transparent',
+                fontWeight: isActive ? 600 : 500
+              })}
+            >
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
       </aside>
       <main style={{ marginLeft: 240, padding: '2rem' }}>

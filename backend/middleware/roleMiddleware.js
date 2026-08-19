@@ -3,7 +3,10 @@ const roleMiddleware = (allowedRoles = []) => (req, res, next) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  if (allowedRoles.length && !allowedRoles.includes(req.user.role)) {
+  const normalizedAllowedRoles = allowedRoles.map((role) => String(role).toUpperCase());
+  const userRole = String(req.user.role || '').toUpperCase();
+
+  if (normalizedAllowedRoles.length && !normalizedAllowedRoles.includes(userRole)) {
     return res.status(403).json({ message: 'Forbidden' });
   }
 

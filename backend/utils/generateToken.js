@@ -1,7 +1,14 @@
 const jwt = require('jsonwebtoken');
 
-const generateToken = (userId, role) => {
-  return jwt.sign({ id: userId, role }, process.env.JWT_SECRET || 'development-secret', {
+const generateToken = (user) => {
+  const payload = {
+    id: user.id || user._id,
+    email: user.email,
+    role: user.role,
+    accountStatus: user.accountStatus
+  };
+
+  return jwt.sign(payload, process.env.JWT_SECRET || 'development-secret', {
     expiresIn: '7d'
   });
 };

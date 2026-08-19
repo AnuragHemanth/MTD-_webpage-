@@ -13,6 +13,8 @@ export const appConfig = {
   appName: 'Student & Employee Management Portal',
   logoText: 'MTD',
   logoPlaceholder: 'MTD',
+  roles: ['STUDENT', 'EMPLOYEE', 'TRAINER', 'HR', 'ADMIN'],
+  accountStatuses: ['PENDING', 'ACTIVE', 'SUSPENDED', 'INACTIVE'],
   colors: {
     primary: '#ff6a00',
     secondary: '#e55a00',
@@ -33,7 +35,7 @@ export const appConfig = {
     headingWeight: 600,
     bodyWeight: 400
   },
-  apiUrl: import.meta.env.VITE_API_URL || '',
+  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   basePath: normalizeBasePath(import.meta.env.VITE_APP_BASE_PATH)
 };
 
