@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { appConfig } from '../config/appConfig';
 
 const PublicLayout = () => {
@@ -12,7 +12,11 @@ const PublicLayout = () => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ fontWeight: 700, fontSize: '1.2rem' }}>{appConfig.logoPlaceholder}</div>
-          <div style={{ fontSize: '0.95rem', opacity: 0.9 }}>Portal Access</div>
+          <nav style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'flex-end' }} aria-label="Public navigation">
+            <NavLink to="/register/student">Student registration</NavLink>
+            <NavLink to="/register/employee">Employee registration</NavLink>
+            <NavLink to="/admin/login">Admin login</NavLink>
+          </nav>
         </div>
       </header>
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 1.25rem' }}>

@@ -10,7 +10,9 @@ export default defineConfig(({ mode }) => {
     base: env.VITE_APP_BASE_PATH || '/',
 
     server: {
+      host: '0.0.0.0',
       port: 5173,
+
       proxy: {
         '/api': {
           target: 'http://localhost:5000',

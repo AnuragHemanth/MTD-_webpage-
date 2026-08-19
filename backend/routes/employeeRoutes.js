@@ -18,8 +18,8 @@ router.use(roleMiddleware(['EMPLOYEE']));
 
 router.get('/me', getEmployeeProfile);
 router.put('/me', employeeProfileValidation, validationMiddleware, upsertEmployeeProfile);
-router.get('/', listEmployees);
-router.get('/:id', getEmployeeById);
-router.delete('/:id', deleteEmployee);
+router.get('/', roleMiddleware(['ADMIN', 'HR']), listEmployees);
+router.get('/:id', roleMiddleware(['ADMIN', 'HR']), getEmployeeById);
+router.delete('/:id', roleMiddleware(['ADMIN']), deleteEmployee);
 
 module.exports = router;

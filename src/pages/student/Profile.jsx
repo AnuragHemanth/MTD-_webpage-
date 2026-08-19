@@ -29,7 +29,8 @@ const defaultProfile = {
   currentSemester: '',
   rollNumber: '',
   cgpa: '',
-  backlogs: ''
+  backlogs: '',
+  skills: []
 };
 
 const Profile = () => {
@@ -52,7 +53,7 @@ const Profile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: name === 'skills' ? value.split(',').map((skill) => skill.trim()).filter(Boolean) : value }));
   };
 
   const handleSubmit = async (e) => {
@@ -77,6 +78,11 @@ const Profile = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <h2 style={{ margin: 0 }}>Student profile</h2>
           <Badge tone="primary">Editable</Badge>
+        </div>
+        <div style={{ marginTop: '0.75rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>Skills</label>
+          <Input name="skills" value={profile.skills.join(', ')} onChange={handleChange} placeholder="JavaScript, Excel, Communication" />
+          <small style={{ display: 'block', marginTop: '0.35rem', color: '#5c5c5c' }}>Separate skills with commas.</small>
         </div>
       </Card>
 

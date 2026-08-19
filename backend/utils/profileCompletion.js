@@ -8,7 +8,7 @@ const isFilled = (value) => {
 };
 
 // Calculate student profile completion (0-100%)
-const calculateStudentCompletion = (student) => {
+const calculateStudentCompletion = (student, hasResume = false) => {
   if (!student) return 0;
 
   const requiredFields = [
@@ -35,8 +35,8 @@ const calculateStudentCompletion = (student) => {
     'cgpa'
   ];
 
-  const filledCount = requiredFields.filter((field) => isFilled(student[field])).length;
-  const percentage = Math.round((filledCount / requiredFields.length) * 100);
+  const filledCount = requiredFields.filter((field) => isFilled(student[field])).length + (hasResume ? 1 : 0);
+  const percentage = Math.round((filledCount / (requiredFields.length + 1)) * 100);
 
   return Math.min(100, Math.max(0, percentage));
 };

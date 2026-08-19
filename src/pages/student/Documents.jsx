@@ -4,8 +4,8 @@ import Badge from '../../components/common/Badge';
 import DocumentCard from '../../components/documents/DocumentCard';
 import documentService from '../../services/documentService';
 
-const requiredTypes = ['AADHAAR', 'PAN', '10TH_MARKS_CARD', 'COLLEGE_ID'];
-const optionalTypes = ['PASSPORT', 'CERTIFICATE', 'RESUME', 'OTHER'];
+const requiredTypes = ['AADHAAR', 'PAN', '10TH_MARKS_CARD', 'COLLEGE_ID', 'RESUME'];
+const optionalTypes = ['PASSPORT', 'CERTIFICATE', 'OTHER'];
 
 const Documents = () => {
   const [documents, setDocuments] = useState([]);

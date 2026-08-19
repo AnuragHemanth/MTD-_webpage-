@@ -1,6 +1,8 @@
 const Student = require('../models/Student');
 const User = require('../models/User');
+const Document = require('../models/Document');
 const { calculateStudentCompletion } = require('../utils/profileCompletion');
+const { createSequentialId } = require('../utils/generateProfileId');
 
 const getStudentProfile = async (req, res) => {
   try {
@@ -11,7 +13,8 @@ const getStudentProfile = async (req, res) => {
     }
 
     // Calculate and attach profile completion percentage
-    const completion = calculateStudentCompletion(student);
+    const resume = await Document.exists({ userId: req.user.id, documentType: 'RESUME' });
+    const completion = calculateStudentCompletion(student, Boolean(resume));
     const studentWithCompletion = { ...student, profileCompletion: completion };
 
     return res.status(200).json({ student: studentWithCompletion });
@@ -33,7 +36,7 @@ const upsertStudentProfile = async (req, res) => {
       userId: req.user.id,
       firstName: req.body.firstName || user.firstName,
       lastName: req.body.lastName || user.lastName,
-      studentId: req.body.studentId || `STU-${Date.now()}`
+      studentId: req.body.studentId || await createSequentialId(Student, 'studentId', 'MIDSTD')
     };
 
     const student = await Student.findOneAndUpdate(
@@ -43,7 +46,8 @@ const upsertStudentProfile = async (req, res) => {
     );
 
     // Calculate and attach profile completion percentage
-    const completion = calculateStudentCompletion(student);
+    const resume = await Document.exists({ userId: req.user.id, documentType: 'RESUME' });
+    const completion = calculateStudentCompletion(student, Boolean(resume));
     const studentWithCompletion = { ...student.toObject ? student.toObject() : student, profileCompletion: completion };
 
     return res.status(200).json({ student: studentWithCompletion });

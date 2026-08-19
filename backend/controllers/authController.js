@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const Document = require('../models/Document');
 const generateToken = require('../utils/generateToken');
 
 const normalizeRole = (role = '') => String(role).trim().toUpperCase();
@@ -62,8 +63,12 @@ const authController = {
 
     const normalizedRole = normalizeRole(role);
 
-    if (!['STUDENT', 'EMPLOYEE', 'TRAINER', 'HR', 'ADMIN'].includes(normalizedRole)) {
-      return res.status(400).json({ message: 'Invalid role selected.' });
+    if (!['STUDENT', 'EMPLOYEE'].includes(normalizedRole)) {
+      return res.status(400).json({ message: 'Only student and employee self-registration is allowed.' });
+    }
+
+    if (normalizedRole === 'STUDENT' && !req.file) {
+      return res.status(400).json({ message: 'Resume is required for student registration.' });
     }
 
     const existingUser = await User.findOne({ email: String(email).trim().toLowerCase() });
@@ -73,7 +78,7 @@ const authController = {
     }
 
     const passwordHash = await bcrypt.hash(String(password), 10);
-    const finalStatus = normalizeStatus(accountStatus || 'ACTIVE');
+    const finalStatus = 'ACTIVE';
 
     const user = await User.create({
       userId: `${normalizedRole}-${Date.now()}`,
@@ -85,6 +90,19 @@ const authController = {
       accountStatus: finalStatus,
       emailVerified: false
     });
+
+    if (normalizedRole === 'STUDENT') {
+      await Document.create({
+        documentId: `DOC-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        userId: user._id,
+        documentType: 'RESUME',
+        fileName: req.file.originalname,
+        storedFileName: req.file.filename,
+        fileUrl: `/api/documents/file/${req.file.filename}`,
+        verificationStatus: 'PENDING',
+        uploadedAt: new Date()
+      });
+    }
 
     const token = generateToken({
       id: user._id,
@@ -129,6 +147,31 @@ const authController = {
         emailVerified: user.emailVerified
       }
     });
+  },
+
+  updateCurrentUser: async (req, res) => {
+    const { firstName, lastName, email } = req.body;
+    const updates = {};
+
+    if (firstName !== undefined) updates.firstName = String(firstName).trim();
+    if (lastName !== undefined) updates.lastName = String(lastName).trim();
+    if (email !== undefined) updates.email = String(email).trim().toLowerCase();
+
+    if (!updates.firstName || !updates.lastName || !updates.email) {
+      return res.status(400).json({ message: 'First name, last name, and email are required.' });
+    }
+
+    const duplicate = await User.findOne({ email: updates.email, _id: { $ne: req.user.id } });
+    if (duplicate) {
+      return res.status(409).json({ message: 'This email is already registered.' });
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true, runValidators: true }).select('-passwordHash');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    return res.status(200).json({ user });
   }
 };
 

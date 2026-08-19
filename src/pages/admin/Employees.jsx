@@ -7,6 +7,7 @@ const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [ids, setIds] = useState({});
   const pageSize = 8;
 
   useEffect(() => {
@@ -32,6 +33,15 @@ const Employees = () => {
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  const saveId = async (employee) => {
+    try {
+      await adminService.updateEmployeeId(employee._id, ids[employee._id] || employee.employeeId);
+      setEmployees((current) => current.map((item) => item._id === employee._id ? { ...item, employeeId: ids[employee._id] || employee.employeeId } : item));
+    } catch (error) {
+      alert(error?.response?.data?.message || 'Employee ID could not be saved.');
+    }
+  };
 
   useEffect(() => {
     setPage(1);
@@ -63,7 +73,7 @@ const Employees = () => {
               {currentPageItems.map((employee) => (
                 <tr key={employee._id || employee.employeeId} style={{ borderBottom: '1px solid #f3f3f3' }}>
                   <td style={{ padding: '0.8rem' }}>{employee.firstName || 'N/A'} {employee.lastName || ''}</td>
-                  <td style={{ padding: '0.8rem' }}>{employee.employeeId || 'N/A'}</td>
+                  <td style={{ padding: '0.8rem' }}><div style={{ display: 'flex', gap: '0.4rem', minWidth: 180 }}><input value={ids[employee._id] ?? employee.employeeId ?? ''} onChange={(event) => setIds((current) => ({ ...current, [employee._id]: event.target.value }))} aria-label={`Employee ID for ${employee.firstName || 'employee'}`} /><button type="button" onClick={() => saveId(employee)} style={{ border: 0, borderRadius: 8, background: '#fff5ee', color: '#ff6a00', padding: '0.4rem 0.6rem' }}>Save</button></div></td>
                   <td style={{ padding: '0.8rem' }}>{employee.department || 'N/A'}</td>
                   <td style={{ padding: '0.8rem' }}>{employee.designation || 'N/A'}</td>
                 </tr>

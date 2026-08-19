@@ -31,6 +31,10 @@ const employeeSchema = new mongoose.Schema(
     workLocation: { type: String, trim: true },
     previousExperience: { type: Number, default: 0 },
     skills: [{ type: String, trim: true }],
+    bankName: { type: String, trim: true },
+    bankAccountName: { type: String, trim: true },
+    bankAccountNumber: { type: String, trim: true, select: false },
+    bankIfscCode: { type: String, trim: true },
     profileCompletion: { type: Number, default: 0 }
   },
   { timestamps: true }

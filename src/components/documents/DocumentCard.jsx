@@ -12,6 +12,7 @@ const statusColors = {
 const DocumentCard = ({ documentType, document, required = false, onUploadSuccess, onView }) => {
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
 
   const status = document?.verificationStatus || 'NOT_UPLOADED';
 
@@ -19,8 +20,22 @@ const DocumentCard = ({ documentType, document, required = false, onUploadSucces
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      setError('Invalid file type. Upload PDF, JPG, PNG, DOC, or DOCX.');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File is too large. Maximum size is 5 MB.');
+      event.target.value = '';
+      return;
+    }
+
     try {
       setUploading(true);
+      setError('');
       if (document) {
         await documentService.replaceDocument(documentType, file);
       } else {
@@ -28,7 +43,7 @@ const DocumentCard = ({ documentType, document, required = false, onUploadSucces
       }
       if (onUploadSuccess) await onUploadSuccess();
     } catch (error) {
-      alert(error?.response?.data?.message || 'Document upload failed.');
+      setError(error?.response?.data?.message || 'Document upload failed.');
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -71,8 +86,10 @@ const DocumentCard = ({ documentType, document, required = false, onUploadSucces
           {uploading ? 'Uploading...' : document ? 'Replace' : 'Upload'}
         </button>
 
-        <input ref={fileInputRef} type="file" hidden onChange={handleFileChange} />
+        <input ref={fileInputRef} type="file" hidden accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onChange={handleFileChange} />
       </div>
+
+      {error && <div style={{ marginTop: '0.75rem', color: '#b42318', fontSize: '0.85rem' }}>{error}</div>}
 
       {document?.rejectionReason && (
         <div style={{ marginTop: '0.75rem', color: '#b42318', fontSize: '0.85rem' }}>

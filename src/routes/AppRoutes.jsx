@@ -25,6 +25,7 @@ import AdminEmployeesPage from '../pages/admin/Employees';
 import AdminDocumentsPage from '../pages/admin/Documents';
 import AdminUsersPage from '../pages/admin/Users';
 import AdminSettingsPage from '../pages/admin/Settings';
+import AdminCoursesPage from '../pages/admin/Courses';
 import HRDashboardPage from '../pages/hr/Dashboard';
 import HREmployeesPage from '../pages/hr/Employees';
 import HRDocumentsPage from '../pages/hr/Documents';
@@ -41,6 +42,9 @@ const AppRoutes = () => {
         <Route index element={<Navigate to={withBasePath('/login')} replace />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="register/student" element={<RegisterPage defaultRole="STUDENT" />} />
+        <Route path="register/employee" element={<RegisterPage defaultRole="EMPLOYEE" />} />
+        <Route path="admin/login" element={<LoginPage />} />
       </Route>
 
       <Route
@@ -91,6 +95,7 @@ const AppRoutes = () => {
         <Route path="documents" element={<AdminDocumentsPage />} />
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
+        <Route path="courses" element={<AdminCoursesPage />} />
       </Route>
 
       <Route

@@ -1,10 +1,11 @@
 const Employee = require('../models/Employee');
 const User = require('../models/User');
 const { calculateEmployeeCompletion } = require('../utils/profileCompletion');
+const { createSequentialId } = require('../utils/generateProfileId');
 
 const getEmployeeProfile = async (req, res) => {
   try {
-    const employee = await Employee.findOne({ userId: req.user.id }).lean();
+    const employee = await Employee.findOne({ userId: req.user.id }).select('+bankAccountNumber').lean();
 
     if (!employee) {
       return res.status(404).json({ message: 'Employee profile not found.' });
@@ -33,7 +34,7 @@ const upsertEmployeeProfile = async (req, res) => {
       userId: req.user.id,
       firstName: req.body.firstName || user.firstName,
       lastName: req.body.lastName || user.lastName,
-      employeeId: req.body.employeeId || `EMP-${Date.now()}`
+      employeeId: req.body.employeeId || await createSequentialId(Employee, 'employeeId', 'MID')
     };
 
     const employee = await Employee.findOneAndUpdate(

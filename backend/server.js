@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const documentRoutes = require('./routes/documentRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const errorMiddleware = require('./middleware/errorMiddleware');
 
 dotenv.config();
@@ -48,6 +49,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use(errorMiddleware);
 

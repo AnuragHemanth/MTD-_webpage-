@@ -18,8 +18,8 @@ router.use(roleMiddleware(['STUDENT']));
 
 router.get('/me', getStudentProfile);
 router.put('/me', studentProfileValidation, validationMiddleware, upsertStudentProfile);
-router.get('/', listStudents);
-router.get('/:id', getStudentById);
-router.delete('/:id', deleteStudent);
+router.get('/', roleMiddleware(['ADMIN', 'HR']), listStudents);
+router.get('/:id', roleMiddleware(['ADMIN', 'HR']), getStudentById);
+router.delete('/:id', roleMiddleware(['ADMIN']), deleteStudent);
 
 module.exports = router;

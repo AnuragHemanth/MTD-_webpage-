@@ -29,7 +29,12 @@ const defaultProfile = {
   employmentType: '',
   reportingManager: '',
   workLocation: '',
-  previousExperience: ''
+  previousExperience: '',
+  skills: [],
+  bankName: '',
+  bankAccountName: '',
+  bankAccountNumber: '',
+  bankIfscCode: ''
 };
 
 const Profile = () => {
@@ -52,7 +57,7 @@ const Profile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: name === 'skills' ? value.split(',').map((skill) => skill.trim()).filter(Boolean) : value }));
   };
 
   const handleSubmit = async (e) => {
@@ -193,7 +198,13 @@ const Profile = () => {
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>Employment type</label>
-            <Input name="employmentType" value={profile.employmentType} onChange={handleChange} placeholder="Full-time, Part-time, etc." />
+            <select name="employmentType" value={profile.employmentType} onChange={handleChange} style={{ width: '100%', border: '1px solid #e9e9e9', borderRadius: 10, padding: '0.75rem 0.8rem', background: '#fff' }}>
+              <option value="">Select employment type</option>
+              <option value="FULL_TIME">Full-time</option>
+              <option value="PART_TIME">Part-time</option>
+              <option value="CONTRACT">Contract</option>
+              <option value="INTERN">Intern</option>
+            </select>
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>Reporting manager</label>
@@ -207,6 +218,22 @@ const Profile = () => {
             <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>Previous experience (years)</label>
             <Input type="number" name="previousExperience" value={profile.previousExperience} onChange={handleChange} placeholder="Years" />
           </div>
+        </div>
+        <div style={{ marginTop: '0.75rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>Skills</label>
+          <Input name="skills" value={profile.skills.join(', ')} onChange={handleChange} placeholder="Leadership, Excel, Communication" />
+          <small style={{ display: 'block', marginTop: '0.35rem', color: '#5c5c5c' }}>Separate skills with commas.</small>
+        </div>
+      </Card>
+
+      <Card>
+        <h3 style={{ marginTop: 0 }}>Bank details</h3>
+        <p style={{ marginTop: 0, color: '#5c5c5c', fontSize: '0.9rem' }}>Optional. Only your own profile can access these details.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+          <Input name="bankName" value={profile.bankName} onChange={handleChange} placeholder="Bank name" />
+          <Input name="bankAccountName" value={profile.bankAccountName} onChange={handleChange} placeholder="Account holder name" />
+          <Input name="bankAccountNumber" value={profile.bankAccountNumber} onChange={handleChange} placeholder="Account number" inputMode="numeric" />
+          <Input name="bankIfscCode" value={profile.bankIfscCode} onChange={handleChange} placeholder="IFSC / routing code" />
         </div>
       </Card>
 

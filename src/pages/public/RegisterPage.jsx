@@ -4,10 +4,11 @@ import { appConfig, BASE_PATH } from '../../config/appConfig';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
 
-const RegisterPage = () => {
+const RegisterPage = ({ defaultRole = 'STUDENT' }) => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'STUDENT' });
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '', role: defaultRole });
+  const [resume, setResume] = useState(null);
   const [errors, setErrors] = useState({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,8 @@ const RegisterPage = () => {
       firstName: validation.firstName,
       lastName: validation.lastName,
       email: validation.email,
-      password: validation.password
+      password: validation.password,
+      resume: formData.role === 'STUDENT' && !resume ? 'Resume is required for student registration.' : ''
     };
 
     setErrors(nextErrors);
@@ -44,13 +46,14 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      await authService.register({
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-        role: formData.role
-      });
+      const registrationPayload = new FormData();
+      registrationPayload.append('firstName', formData.firstName.trim());
+      registrationPayload.append('lastName', formData.lastName.trim());
+      registrationPayload.append('email', formData.email.trim());
+      registrationPayload.append('password', formData.password);
+      registrationPayload.append('role', formData.role);
+      if (resume) registrationPayload.append('resume', resume);
+      await authService.register(registrationPayload);
 
       const loginResponse = await login({ email: formData.email.trim(), password: formData.password });
       const normalizedRole = String(loginResponse?.user?.role || formData.role).toLowerCase();
@@ -79,6 +82,12 @@ const RegisterPage = () => {
             <input id="register-last-name" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last name" aria-invalid={Boolean(errors.lastName)} aria-describedby={errors.lastName ? 'register-last-name-error' : undefined} style={{ width: '100%', borderRadius: 12, border: `1px solid ${errors.lastName ? '#dc2626' : appConfig.colors.border}`, padding: '0.8rem 0.9rem', outline: 'none', boxShadow: errors.lastName ? '0 0 0 3px rgba(220,38,38,0.1)' : '0 0 0 1px transparent' }} />
             {errors.lastName && <div id="register-last-name-error" style={{ marginTop: '0.35rem', color: '#b42318', fontSize: '0.8rem' }}>{errors.lastName}</div>}
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="register-resume" style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Resume {formData.role === 'STUDENT' ? '(required)' : '(optional)'}</label>
+          <input id="register-resume" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required={formData.role === 'STUDENT'} onChange={(event) => { setResume(event.target.files?.[0] || null); setErrors((previous) => ({ ...previous, resume: '' })); }} />
+          {errors.resume && <div style={{ marginTop: '0.35rem', color: '#b42318', fontSize: '0.8rem' }}>{errors.resume}</div>}
         </div>
 
         <div>

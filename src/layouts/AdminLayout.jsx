@@ -5,6 +5,7 @@ const navItems = [
   { label: 'Dashboard', path: `${BASE_PATH}/admin/dashboard` },
   { label: 'Students', path: `${BASE_PATH}/admin/students` },
   { label: 'Employees', path: `${BASE_PATH}/admin/employees` },
+  { label: 'Courses', path: `${BASE_PATH}/admin/courses` },
   { label: 'Documents', path: `${BASE_PATH}/admin/documents` },
   { label: 'Users', path: `${BASE_PATH}/admin/users` },
   { label: 'Settings', path: `${BASE_PATH}/admin/settings` }
